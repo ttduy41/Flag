@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VINHMODLAG V130 | FINAL EMPIRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --main: #00ff88; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: rgba(255,255,255,0.1); }
+        .light-mode { --bg: #f1f5f9; --card: #ffffff; --text: #0f172a; --border: rgba(0,0,0,0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Lexend', sans-serif; transition: 0.3s; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        /* 1. INTRO */
+        #intro { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .intro-box h1 { font-size: clamp(35px, 10vw, 60px); color: var(--main); font-weight: 900; text-shadow: 0 0 25px var(--main); }
+        .social-btns { display: flex; gap: 15px; justify-content: center; margin-top: 25px; }
+        .social-btns a { padding: 12px 20px; border-radius: 50px; text-decoration: none; color: white; font-weight: bold; font-size: 13px; }
+
+        /* 2. AUTH SCREEN */
+        .auth-scr { position: fixed; inset: 0; background: var(--bg); z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { background: var(--card); padding: 35px; border-radius: 30px; width: 100%; max-width: 400px; border: 1px solid var(--border); text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+
+        /* 3. HEADER */
+        header { height: 75px; background: var(--card); display: flex; align-items: center; padding: 0 25px; border-bottom: 2px solid var(--main); position: sticky; top: 0; z-index: 1000; }
+        .wallet { background: rgba(0,255,136,0.1); padding: 8px 15px; border-radius: 12px; color: var(--main); font-weight: bold; border: 1px solid var(--main); }
+
+        /* 4. SHOP GRID & CARDS */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .p-card { background: var(--card); border-radius: 25px; padding: 25px; border: 1px solid var(--border); position: relative; }
+        .p-stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; font-size: 10px; font-weight: bold; text-align: center; }
+        .p-stat div { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; border: 1px solid var(--border); }
+
+        /* 5. MENU & HISTORY */
+        #menu { position: fixed; top: 0; left: -420px; width: 380px; height: 100%; background: var(--card); z-index: 2000; padding: 25px; overflow-y: auto; border-right: 3px solid var(--main); }
+        .history-box { background: rgba(0,0,0,0.2); border-radius: 20px; padding: 15px; margin: 15px 0; border: 1px solid var(--border); }
+        .trans-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+        .trans-table td { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        /* 6. AI ROBOT */
+        #aiBox { background: #000; border-radius: 20px; padding: 15px; margin-top: 25px; border: 1px solid #333; }
+        #aiLogs { height: 130px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 11px; color: var(--main); padding: 10px; line-height: 1.5; }
+
+        /* 7. GENERAL UI */
+        input, select, button { width: 100%; padding: 13px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; }
+        .btn-main { background: var(--main); color: #000; font-weight: 900; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .badge { background: #ff4757; color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px; position: relative; top: -2px; }
+        .btn-view { background: var(--main); color: #000; padding: 5px 10px; border-radius: 8px; font-size: 10px; font-weight: bold; border: none; cursor: pointer; }
+
+        /* 8. MODAL */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card); padding: 30px; border-radius: 30px; width: 90%; max-width: 450px; text-align: center; border: 1px solid var(--main); }
+    </style>
+</head>
+<body>
+
+    <div id="intro">
+        <div class="intro-box">
+            <h1>VINHMODLAG</h1>
+            <p style="color: #94a3b8; margin-top: 10px;">Uy tín làm nên thương hiệu sếp Vinh</p>
+            <div class="social-btns">
+                <a href="https://zalo.me/vinh" style="background: #0068ff;">Zalo Admin</a>
+                <a href="https://t.me/vinh" style="background: #24A1DE;">Telegram</a>
+            </div>
+            <button class="btn-main" onclick="closeIntro()" style="width: 200px; margin-top: 40px;">VÀO CỬA HÀNG</button>
+        </div>
+    </div>
+
+    <div id="scrLog" class="auth-scr" style="display:none">
+        <div class="auth-card">
+            <h2 style="margin-bottom:20px">ĐĂNG NHẬP</h2>
+            <input id="uL" placeholder="Tên tài khoản...">
+            <input type="password" id="pL" placeholder="Mật khẩu...">
+            <button class="btn-main" onclick="doLogin()">ĐĂNG NHẬP NGAY</button>
+            <button style="background:#fff; color:#000; font-weight:bold;" onclick="alert('Google Auth is ready!')">🚀 Login with Google</button>
+            <p onclick="swAuth('reg')" style="margin-top:20px; font-size:12px; cursor:pointer;">Chưa có tài khoản? <b style="color:var(--main)">Đăng ký</b></p>
+        </div>
+    </div>
+
+    <div id="scrReg" class="auth-scr" style="display:none">
+        <div class="auth-card">
+            <h2 style="margin-bottom:20px">ĐĂNG KÝ</h2>
+            <input id="uR" placeholder="Nhập tên muốn tạo...">
+            <input type="password" id="pR" placeholder="Mật khẩu bảo mật...">
+            <button class="btn-main" onclick="doReg()">TẠO TÀI KHOẢN</button>
+            <p onclick="swAuth('log')" style="margin-top:20px; font-size:12px; cursor:pointer;">Đã có tài khoản? <b style="color:var(--main)">Đăng nhập</b></p>
+        </div>
+    </div>
+
+    <div id="app" style="display:none">
+        <header>
+            <div onclick="opMenu()" style="font-size:24px; cursor:pointer; margin-right:20px; color:var(--main)">☰</div>
+            <div style="flex:1; font-weight:900; letter-spacing:1px; color:var(--main)">VINHMODLAG</div>
+            <div class="wallet">💰 <span id="uBal">0</span>đ</div>
+        </header>
+
+        <div id="menu">
+            <h3 style="color:var(--main)">Sếp: <span id="uDisp"></span></h3>
+            <div onclick="toggleMode()" style="cursor:pointer; font-size:11px; color:#888; margin-top:5px;">🌓 Chế độ Sáng / Tối</div>
+            <hr style="opacity:0.1; margin: 20px 0;">
+            
+            <p style="font-size:11px; font-weight:bold;">🔔 THÔNG BÁO <span id="noteBadge" class="badge">0</span></p>
+            <div id="noteList" style="font-size:10px; color:#94a3b8; margin-bottom:20px; max-height: 80px; overflow-y:auto;"></div>
+
+            <div class="history-box">
+                <p style="font-size:11px; font-weight:bold; color:var(--main); margin-bottom:10px;">📋 LỊCH SỬ MUA HÀNG</p>
+                <table class="trans-table">
+                    <tbody id="histBody"></tbody>
+                </table>
+            </div>
+
+            <p style="font-size:11px; font-weight:bold;">NẠP TIỀN HỆ THỐNG</p>
+            <select onchange="swPay(this.value)">
+                <option value="bank">Chuyển Khoản (QR)</option>
+                <option value="card">Nạp Thẻ Cào (Auto)</option>
+            </select>
+            
+            <div id="payBank">
+                <input type="number" id="pAmt" placeholder="Nhập số tiền...">
+                <button class="btn-main" onclick="genQR()">TẠO MÃ QR</button>
+                <img id="qrImg" style="width:100%; display:none; margin-top:15px; border-radius:20px; border:2px solid var(--main)">
+            </div>
+
+            <div id="payCard" style="display:none">
+                <select id="cType">
+                    <option value="Garena">Thẻ Garena</option>
+                    <option value="Viettel">Thẻ Viettel</option>
+                    <option value="Mobifone">Thẻ Mobifone</option>
+                    <option value="Vinaphone">Thẻ Vinaphone</option>
+                    <option value="Zing">Thẻ Zing</option>
+                </select>
+                <input id="cPin" placeholder="Mã PIN thẻ...">
+                <input id="cSeri" placeholder="Số Seri...">
+                <button class="btn-main" onclick="sendCard()">GỬI THẺ ĐỢI DUYỆT</button>
+            </div>
+
+            <div id="adm" style="display:none">
+                <div id="aiBox">
+                    <b style="color:var(--main); font-size:10px;">🤖 ADMIN AI COMMAND (AUTO-SAVE)</b>
+                    <div id="aiLogs">Ready, sir!</div>
+                    <input id="aiCmd" placeholder="Nhập lệnh (.help)">
+                    <button class="btn-main" style="padding:5px; font-size:10px" onclick="doAI()">GỬI LỆNH</button>
+                </div>
+            </div>
+            <button onclick="logout()" style="margin-top:30px; border:1px solid #ff4757; color:#ff4757; background:none; font-weight:bold;">ĐĂNG XUẤT</button>
+        </div>
+
+        <div class="container">
+            <div class="grid" id="sGrid"></div>
+        </div>
+    </div>
+
+    <div id="modSucc" class="modal"><div class="modal-content">
+        <h2 style="color:var(--main)">GIAO DỊCH THÀNH CÔNG!</h2>
+        <p style="font-size:12px; color:#888; margin-top:10px;">Dữ liệu của sếp:</p>
+        <div style="background:#000; padding:15px; color:var(--main); font-family:monospace; border-radius:15px; margin:20px 0; word-break:break-all;" id="resKey"></div>
+        <button class="btn-main" onclick="copyKey()">SAO CHÉP DỮ LIỆU</button>
+        <button onclick="closeModal('modSucc')" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer;">ĐÓNG CỬA SỔ</button>
+    </div></div>
+
+    <div id="ovl" onclick="clMenu()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1500;"></div>
+
+    <script>
+        const DB = 'VINHMOD_V130_DB';
+        const SS = 'VINHMOD_V130_SS';
+
+        // KHỞI TẠO DATA & CƠ CHẾ AUTO-SAVE
+        let data = JSON.parse(localStorage.getItem(DB)) || {
+            users: { "vinhmoddz": { p: "vinhmoddz", b: 9999999, admin: true, buys: [], notes: [] } },
+            prods: [
+                { id: 0, name: "Acc Clone Lv5", total: 0, sold: 0, plans: {"Mặc định": 5000}, stock: {"Mặc định": []} },
+                { id: 1, name: "Itachi Ping V3", total: 0, sold: 0, plans: {"1 Ngày": 10000, "7 Ngày": 50000, "30 Ngày": 150000, "Vĩnh Viễn": 400000}, stock: {"1 Ngày": [], "7 Ngày": [], "30 Ngày": [], "Vĩnh Viễn": []} },
+                { id: 2, name: "Hopper Plus", total: 0, sold: 0, plans: {"1 Ngày": 10000, "7 Ngày": 200000, "30 Ngày": 300000, "Vĩnh Viễn": 400000}, stock: {"1 Ngày": [], "7 Ngày": [], "30 Ngày": [], "Vĩnh Viễn": []} }
+            ]
+        };
+
+        let user = localStorage.getItem(SS) || null;
+
+        function save() { 
+            localStorage.setItem(DB, JSON.stringify(data)); 
+            if(user) { renderShop(); renderUser(); }
+        }
+        window.onbeforeunload = save; // Auto-save khi tắt app
+
+        function closeIntro() { document.getElementById('intro').style.display='none'; if(!user) swAuth('log'); else init(); }
+        function swAuth(m) { document.getElementById('scrLog').style.display=m==='log'?'flex':'none'; document.getElementById('scrReg').style.display=m==='reg'?'flex':'none'; }
+        
+        function doLogin() {
+            let u = document.getElementById('uL').value, p = document.getElementById('pL').value;
+            if(data.users[u] && data.users[u].p === p) { user = u; localStorage.setItem(SS, u); init(); } else alert("Thông tin sai sếp ơi!");
+        }
+
+        function doReg() {
+            let u = document.getElementById('uR').value, p = document.getElementById('pR').value;
+            if(u && !data.users[u]) { data.users[u] = {p, b:0, admin:false, buys:[], notes:[]}; save(); swAuth('log'); alert("Đăng ký xong! Mời sếp đăng nhập."); }
+        }
+
+        function init() {
+            document.querySelectorAll('.auth-scr').forEach(s => s.style.display='none');
+            document.getElementById('app').style.display='block';
+            document.getElementById('uDisp').innerText = user;
+            document.getElementById('adm').style.display = data.users[user].admin ? 'block' : 'none';
+            renderShop(); renderUser();
+        }
+
+        function renderShop() {
+            document.getElementById('uBal').innerText = data.users[user].b.toLocaleString();
+            let g = document.getElementById('sGrid'); g.innerHTML = "";
+            data.prods.forEach(p => {
+                let currentStock = Object.values(p.stock).reduce((a,b)=>a+b.length, 0);
+                g.innerHTML += `
+                    <div class="p-card">
+                        <div class="p-stat">
+                            <div>📦 Tổng: ${p.total}</div>
+                            <div>🛒 Đã bán: ${p.sold}</div>
+                            <div>✅ Còn: ${currentStock}</div>
+                        </div>
+                        <h3 style="color:var(--main); margin-bottom:15px; font-weight:900;">${p.name}</h3>
+                        <select id="pl-${p.id}">${Object.keys(p.plans).map(k=>`<option value="${k}">${k} - ${p.plans[k].toLocaleString()}đ</option>`).join('')}</select>
+                        <button class="btn-main" onclick="buy(${p.id})">MUA NGAY</button>
+                    </div>`;
+            });
+        }
+
+        function renderUser() {
+            let h = document.getElementById('histBody'); h.innerHTML = "";
+            data.users[user].buys.forEach((b, idx) => {
+                h.innerHTML += `<tr><td><b>${b.n}</b><br><span style="color:#888">${b.p}</span></td><td style="text-align:right"><button class="btn-view" onclick="showKey(${idx})">LẤY KEY</button></td></tr>`;
+            });
+            let nl = document.getElementById('noteList'); nl.innerHTML = "";
+            data.users[user].notes.slice(0,5).forEach(m => nl.innerHTML += `<div style="margin-bottom:5px;">• ${m}</div>`);
+            document.getElementById('noteBadge').innerText = data.users[user].notes.length;
+        }
+
+        function buy(id) {
+            let p = data.prods[id], plan = document.getElementById(`pl-${id}`).value;
+            let price = p.plans[plan];
+            if(data.users[user].b < price || p.stock[plan].length === 0) return alert("Hết hàng hoặc thiếu tiền sếp ơi!");
+            
+            let key = p.stock[plan].shift();
+            data.users[user].b -= price;
+            p.sold++;
+            data.users[user].buys.unshift({ n: p.name, p: plan, k: [key] });
+            data.users[user].notes.unshift(`Vừa mua thành công: ${p.name}`);
+            save();
+            document.getElementById('resKey').innerText = key;
+            document.getElementById('modSucc').style.display='flex';
+        }
+
+        function showKey(idx) {
+            document.getElementById('resKey').innerText = data.users[user].buys[idx].k.join("\n");
+            document.getElementById('modSucc').style.display='flex';
+        }
+
+        function sendCard() {
+            let type = document.getElementById('cType').value;
+            data.users[user].notes.unshift(`Đang duyệt thẻ ${type}...`);
+            save(); alert("Đã gửi thẻ cho Admin Vinh duyệt!");
+        }
+
+        // ROBOT AI COMMANDS
+        function doAI() {
+            let cmd = document.getElementById('aiCmd').value.trim(), p = cmd.split(" "), logs = document.getElementById('aiLogs');
+            let res = "";
+            if(p[0] === ".help") res = "\n.checktk | .duyet [tên] [tiền] | .nap [ID] [Ngày] [Key]";
+            else if(p[0] === ".checktk") { res = "\n-- USERS --"; Object.keys(data.users).forEach(u => res += `\n${u}: ${data.users[u].p}`); }
+            else if(p[0] === ".duyet") { 
+                if(data.users[p[1]]) { data.users[p[1]].b += parseInt(p[2]); data.users[p[1]].notes.unshift(`Hệ thống đã cộng ${p[2]}đ tiền nạp!`); res = `\n✅ Đã cộng tiền cho ${p[1]}`; } 
+            }
+            else if(p[0] === ".nap") {
+                let id = p[1], day = p[2], key = p[3];
+                let pk = day === "Vĩnh_Viễn" ? "Vĩnh Viễn" : (day === "Mặc_định" ? "Mặc định" : day + " Ngày");
+                if(data.prods[id] && data.prods[id].stock[pk]) {
+                    data.prods[id].stock[pk].push(key); data.prods[id].total++;
+                    res = `\n📦 Đã nạp ${data.prods[id].name} (${pk})`;
+                }
+            }
+            logs.innerHTML += res; logs.scrollTop = logs.scrollHeight; document.getElementById('aiCmd').value = ""; save();
+        }
+
+        function genQR() { let a = document.getElementById('pAmt').value; document.getElementById('qrImg').src = `https://img.vietqr.io/image/MB-0364684151-compact2.jpg?amount=${a}&addInfo=NAP ${user}`; document.getElementById('qrImg').style.display='block'; }
+        function toggleMode() { document.body.classList.toggle('light-mode'); }
+        function opMenu() { document.getElementById('menu').style.left = '0'; document.getElementById('ovl').style.display = 'block'; }
+        function clMenu() { document.getElementById('menu').style.left = '-420px'; document.getElementById('ovl').style.display = 'none'; }
+        function swPay(v) { document.getElementById('payBank').style.display = v==='bank'?'block':'none'; document.getElementById('payCard').style.display = v==='card'?'block':'none'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function copyKey() { navigator.clipboard.writeText(document.getElementById('resKey').innerText); alert("Đã sao chép!"); }
+        function logout() { localStorage.removeItem(SS); location.reload(); }
+        if(user) init();
+    </script>
+</body>
+  </html>
+  
